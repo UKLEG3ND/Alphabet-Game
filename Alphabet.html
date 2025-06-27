@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Alphabet Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #dceeff, #f7fbff);
+      margin: 0;
+      padding: 40px 20px;
+      color: #2c3e50;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      color: #34495e;
+      text-shadow: 1px 1px 2px #b0c4de;
+    }
+
+    .instructions {
+      max-width: 800px;
+      background: #ffffffcc;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+      padding: 15px 25px;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      user-select: none;
+    }
+
+    .controls {
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 12px 26px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.15s ease;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+      background-color: #007bff;
+      color: #fff;
+      user-select: none;
+      min-width: 120px;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 86, 179, 0.5);
+    }
+
+    button:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .letter-display {
+      font-size: 6rem;
+      font-weight: 900;
+      margin: 0 0 10px 0;
+      color: #007bff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+      user-select: none;
+      min-width: 100px;
+    }
+
+    .timer {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #e74c3c;
+      user-select: none;
+      margin-bottom: 20px;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 1100px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 20px 15px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      font-size: 1rem;
+      color: #34495e;
+    }
+
+    thead th {
+      background: #007bff;
+      color: #fff;
+      padding: 14px 15px;
+      text-align: left;
+      font-weight: 700;
+      border-radius: 8px 8px 0 0;
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.35);
+    }
+
+    tbody tr {
+      background: #f9fbff;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+      transition: background-color 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background-color: #e6f0ff;
+    }
+
+    tbody td {
+      padding: 12px 15px;
+      vertical-align: middle;
+      border: none;
+    }
+
+    tbody td:first-child {
+      font-weight: 700;
+      width: 140px;
+      user-select: none;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1.8px solid #cbd5e1;
+      transition: border-color 0.25s ease;
+      font-weight: 500;
+      color: #2c3e50;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+    }
+
+    input[type="text"]:disabled {
+      background-color: #e9ecef;
+      color: #a1aab8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    @media (max-width: 700px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+        min-width: unset;
+      }
+
+      .instructions {
+        font-size: 1rem;
+        padding: 15px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Alphabet Game</h1>
+
+  <div class="instructions" role="region" aria-live="polite">
+    <p>Welcome to the Alphabet Game! This is a fun, fast-paced game perfect for friends, family, or classrooms. When you start a round, letters from A to Z will flash quickly. Click “Stop” to select a letter — that will be your challenge letter for that round.</p>
+    <p>You will then have 30 seconds to fill in each category (Name, Place, Thing, etc.) with words that start with the chosen letter. When time runs out, your answers will be locked in and will be unable to make changes. Try to be fast, creative, and have fun!</p>
+  </div>
+
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <button id="nextRoundBtn" style="display: none;">Start Next Round</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <div class="letter-display" id="letterDisplay">?</div>
+  <div class="timer" id="timer">30</div>
+
+  <div class="game-container">
+    <table id="gameTable">
+      <thead>
+        <tr>
+          <th>Round / Letter</th>
+          <th>Name</th>
+          <th>Place</th>
+          <th>Thing</th>
+          <th>Animal</th>
+          <th>Drama/Cartoon/Film</th>
+          <th>Car</th>
+        </tr>
+      </thead>
+      <tbody id="gameBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    let interval, timer;
+    let timeLeft = 30;
+    let roundCount = 0;
+    let currentRow, currentLetterCell;
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const letterDisplay = document.getElementById('letterDisplay');
+    const timerDisplay = document.getElementById('timer');
+    const gameBody = document.getElementById('gameBody');
+
+    function createRow(roundNumber) {
+      const row = document.createElement('tr');
+      const roundCell = document.createElement('td');
+      roundCell.innerHTML = `<strong>Round ${roundNumber}</strong><br><span class="round-letter">Letter: ?</span>`;
+      row.appendChild(roundCell);
+      currentLetterCell = roundCell.querySelector('.round-letter');
+      for (let i = 0; i < 6; i++) {
+        const cell = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'game-input';
+        cell.appendChild(input);
+        row.appendChild(cell);
+      }
+      gameBody.appendChild(row);
+      return row;
+    }
+
+    function enableRowInputs(row, enable) {
+      const inputs = row.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.disabled = !enable;
+        input.style.backgroundColor = enable ? "white" : "#e9ecef";
+        if (enable) input.value = '';
+      });
+    }
+
+    function startLetterLoop() {
+      interval = setInterval(() => {
+        const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+        letterDisplay.textContent = randomLetter;
+      }, 100);
+    }
+
+    function startCountdown() {
+      timeLeft = 30;
+      timerDisplay.textContent = timeLeft;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          endRound();
+        }
+      }, 1000);
+    }
+
+    function endRound() {
+      const inputs = currentRow.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.disabled = true;
+        input.style.backgroundColor = '#e9ecef';
+      });
+      alert("Time's up!");
+      nextRoundBtn.style.display = 'inline-block';
+      startBtn.disabled = false;
+    }
+
+    function stopAllTimers() {
+      clearInterval(interval);
+      clearInterval(timer);
+    }
+
+    startBtn.onclick = () => {
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      nextRoundBtn.style.display = 'none';
+      letterDisplay.textContent = '?';
+      roundCount++;
+      currentRow = createRow(roundCount);
+      enableRowInputs(currentRow, false);
+      startLetterLoop();
+    };
+
+    stopBtn.onclick = () => {
+      clearInterval(interval);
+      stopBtn.disabled = true;
+      const chosenLetter = letterDisplay.textContent;
+      currentLetterCell.textContent = `Letter: ${chosenLetter}`;
+      enableRowInputs(currentRow, true);
+      startCountdown();
+    };
+
+    nextRoundBtn.onclick = () => startBtn.click();
+
+    resetBtn.onclick = () => {
+      const confirmReset = confirm("Are you sure you want to reset the game? This will remove all rounds and answers.");
+      if (confirmReset) {
+        stopAllTimers();
+        roundCount = 0;
+        gameBody.innerHTML = '';
+        letterDisplay.textContent = '?';
+        timerDisplay.textContent = '30';
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        nextRoundBtn.style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>
